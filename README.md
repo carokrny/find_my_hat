@@ -25,10 +25,10 @@ The user can continue playing as many times as they like, quit after the end of 
 Project is created with:
 * VS Code version 1.58.1
 * Git version 2.30.1
-* Node version 14.17.1 
-* ansi-regex version 4.1.0
+* Node version 14.17.1
+* npm version 7.20.5 
 * promtp-sync version 4.2.0
-* strin-ansi version 5.2.0
+* chalk version 4.1.2
 
 ## Setup
 To play the game:
@@ -37,7 +37,6 @@ To play the game:
 3. run $ node main.js
 
 ## Future Work 
-* Add graphics/coloring to better show the user's current position on the field.
 * Add additional arrow key functionality to navigate the field.
 * Add a maze solver so that every randomly generated field is solvable. 
 

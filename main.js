@@ -2,10 +2,10 @@ const prompt = require('prompt-sync')({sigint: true});
 const chalk = require('chalk');
 
 const hat = chalk.bgYellowBright(chalk.magentaBright('^'));
-const hole = 'O';
+const hole = chalk.black('O');
 const fieldCharacter = chalk.whiteBright('░');
-const pathCharacter = chalk.magentaBright('*');
-const pathCharacterCurrent = chalk.bgMagentaBright(chalk.white(('*')));
+const pathCharacter = chalk.magentaBright(('*'));
+const pathCharacterCurrent = chalk.bgMagentaBright(chalk.blueBright(('*')));
 
 class Field {
     // Field contructor 
@@ -36,12 +36,69 @@ class Field {
         // assign the path character to the top left corner
         arr[0][0] = pathCharacterCurrent;
 
-        // randomly assign the hat to a location
-        const holeRow = Math.floor(Math.random()*height);
-        const holeCol = Math.floor(Math.random()*width);
-        arr[holeRow][holeCol] = hat;
+        // randomly assign the hat to a location in bottom right quarter of field
+        const halfHeight = Math.floor(height/2);
+        const halfWidth = Math.floor(width/2);
+        const hatRow = Math.floor(Math.random()*halfHeight) + halfHeight;
+        const hatCol = Math.floor(Math.random()*halfWidth) + halfWidth;
+        arr[hatRow][hatCol] = hat;
 
-        return new Field(arr);
+        return new Field(arr, height, width);
+    }
+
+    // determine if a field is solvable
+    // i.e., that user can navigate to the hat from the starting point
+    isSolvable() {
+        // make a copy of the field to make calls easier
+        const maze = this.field.slice();
+        // save height and width of field for bounds in maze solver
+        const height = maze.length;
+        const width = maze[0].length;
+
+        // initialize an array of places that were tested and set them all to false
+        const wasHere = [];
+        for (let i = 0; i < height; i++) {
+            const row = [];
+            for (let j = 0; j < width; j++) {
+                row.push(false);
+            }
+            wasHere.push(row);
+        }
+
+        // recursive function to find a path to the hat 
+        function findPath(x, y) {
+            // determine if found hat
+            if(maze[y][x] === hat) {
+                return true;
+            } else if (maze[y][x] === hole || wasHere[y][x]) {
+                return false;
+            } else {
+                wasHere[y][x] = true;
+                // recursively call findPath(x, y) until reach the end of all paths 
+                if (x != 0) {
+                    if (findPath(x-1, y)) {
+                        return true;
+                    }
+                }
+                if (y != 0) {
+                    if (findPath(x, y-1)) {
+                        return true;
+                    }
+                }
+                if (x != width-1) {
+                    if (findPath(x+1, y)) {
+                        return true;
+                    }
+                }
+                if (y != height-1) {
+                    if (findPath(x, y+1)) {
+                        return true;
+                    }
+                }
+                return false;
+            }
+        }
+        return findPath(this.x, this.y);
     }
 
     // print out the field 
@@ -55,7 +112,7 @@ class Field {
     printRules() {
         console.log('\nWelcome to Find My Hat!\n');
         console.log('I\'ve lost my hat and need help finding it. It looks like this: ' + hat);
-        console.log('You are the ' + pathCharacter + ' symbol. Use the keys to navigate to get my hat.');
+        console.log('You are the ' + pathCharacterCurrent + ' symbol. Use the keys to navigate to get my hat.');
         console.log('But don\'t fall down a hole' + hole + 'or off the field!');
         console.log('\nCommands are case-insensitive. Press ctrl + c to quit at any time.\n')
     }
@@ -157,14 +214,18 @@ class Field {
         // loop through playing games until user quits
         let playing = true; 
         while(playing) {
-            const randField = Field.generateField(15, 10, 25);
+            let randField; 
+            let solvable = false;
+            while (!solvable) {
+                randField = Field.generateField(15, 10, 35);
+                solvable = randField.isSolvable();
+            }
+
             randField.game();
 
             let again = prompt('End of game. Play again? (Y/N): ');
             again = again.toUpperCase();
-            if (again === 'Y') {
-                console.log('\nCreating a new board!\n')
-            } else {
+            if (again !== 'Y') {
                 playing = false;
                 console.log('\nBye!\n');
             }

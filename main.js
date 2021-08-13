@@ -45,10 +45,19 @@ class Field {
     }
 
     // print out the field 
-    print() {
+    printField() {
         this.field.forEach(element => {
             console.log(chalk.bgGreenBright(element.join(' ')));
         });
+    }
+
+    // print out the game rules 
+    printRules() {
+        console.log('\nWelcome to Find My Hat!\n');
+        console.log('I\'ve lost my hat and need help finding it. It looks like this: ' + hat);
+        console.log('You are the ' + pathCharacter + ' symbol. Use the keys to navigate to get my hat.');
+        console.log('But don\'t fall down a hole' + hole + 'or off the field!');
+        console.log('\nCommands are case-insensitive. Press ctrl + c to quit at any time.\n')
     }
 
     // mark where the user has moved
@@ -83,8 +92,7 @@ class Field {
 
     // getMove() retrieves a move from the user via the terminal 
     getMove() {
-        // mark previous move to normal path character;
-        this.markPath();
+        
         
         // receive user input from terminal 
         // prompt will loop until a valid move is made by the user.
@@ -124,9 +132,12 @@ class Field {
 
         // Loop through game
         while(playGame) {
-            this.print();
+            console.clear();    // clear last move to keep console neat
+            this.printRules()   // print rules
+            this.printField();  // print the field
+            this.markPath();    // mark previous move to normal path character;
             this.getMove();
-            console.log(); // add blank line to visually break up moves
+            console.log();      // add blank line to visually break up moves
             if(!this.onField()) { // Determine if move is off board 
                 console.log('Moved off field. You lose.');
                 playGame = false;
@@ -143,13 +154,6 @@ class Field {
 
     // play() loops explains rules and loops through games until user quits
     static play() {
-        // explain game rules 
-        console.log('\nWelcome to Find My Hat!');
-        console.log('I\'ve lost my hat and need help finding it. It looks like this: ' + hat);
-        console.log('You are the ' + pathCharacter + ' symbol. Use the keys to navigate to get my hat.');
-        console.log('But don\'t fall down a hole' + hole + 'or off the field!\n');
-        console.log('Press ctrl + c to quit at any time.')
-
         // loop through playing games until user quits
         let playing = true; 
         while(playing) {

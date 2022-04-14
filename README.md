@@ -1,6 +1,8 @@
 # Find My Hat
 JavaScript terminal game to solve a maze and find my hat. 
 
+![Screenshot of terminal game](./screenshot.png)
+
 ## Table of contents
 * [General information](#general-information)
 * [Technologies](#technologies)
@@ -33,8 +35,9 @@ Project is created with:
 ## Setup
 To play the game:
 1. Download find_my_hat
-2. cd to find_my_hat in terminal  
-3. run $ node main.js
+2. cd to find_my_hat in terminal 
+3. run `npm install` 
+3. run `node main.js`
 
 ## Future Work 
 * Add additional arrow key functionality to navigate the field.
